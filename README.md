@@ -1,152 +1,110 @@
-# AI-Powered Resume Builder
+# 📄 ATS Resume Builder — AI-Powered Resume Creator
 
-A professional, ATS-friendly resume builder with enhanced UI, animations, and smart import functionality.
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-12.2-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## ✨ Enhanced Features
-
-### 🎨 **Professional UI & Theme**
-- **Modern Design System**: Clean, professional interface with glass morphism effects
-- **Enhanced Typography**: Inter + Playfair Display + JetBrains Mono fonts for optimal readability
-- **Responsive Layout**: Mobile-first design that works perfectly on all devices
-- **Color System**: Professional blue gradient palette with proper contrast ratios
-
-### 🚀 **Advanced Animations**
-- **Staggered Entrances**: Smooth, timed animations for all page elements
-- **Interactive Hover Effects**: Subtle animations on cards, buttons, and icons
-- **Floating Particles**: Dynamic background elements for visual interest
-- **Spring Physics**: Natural, bouncy animations using Framer Motion
-
-### 📁 **Smart Import System**
-- **Multiple Resume Templates**: Student, Professional, and Creative profiles
-- **Intelligent Parsing**: Automatically detects resume type based on filename
-- **File Validation**: Supports PDF, Word documents, and text files (max 10MB)
-- **Loading States**: Professional feedback during import process
-- **Enhanced Data**: Rich, realistic dummy data for testing
-
-### 🎯 **User Experience**
-- **Drag & Drop**: Intuitive file upload with visual feedback
-- **Path Selection**: Clear student vs. professional career paths
-- **Floating Action Button**: Quick access to primary actions
-- **Scroll Progress**: Visual indicator of page progression
-- **Custom Scrollbar**: Branded scrollbar design
-
-## 🛠️ Technical Implementation
-
-### **Frontend Stack**
-- **React 18** with TypeScript
-- **Tailwind CSS** for utility-first styling
-- **Framer Motion** for smooth animations
-- **Lucide React** for consistent iconography
-
-### **Design System**
-- **CSS Variables**: Centralized color and spacing tokens
-- **Component Classes**: Reusable styling patterns
-- **Animation Utilities**: Custom keyframes and transitions
-- **Responsive Breakpoints**: Mobile-first approach
-
-### **Performance**
-- **Font Optimization**: Google Fonts with proper preloading
-- **Lazy Loading**: Efficient component rendering
-- **Optimized Animations**: Hardware-accelerated transforms
-- **Minimal Bundle**: Tree-shaking and code splitting
-
-## 🚀 Getting Started
-
-### **Prerequisites**
-- Node.js 18+ 
-- npm or yarn
-
-### **Installation**
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd ats-resume-builder
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-### **Testing Import Functionality**
-1. Download the `demo-resume.json` file
-2. Upload it through the import interface
-3. Watch the smart parsing in action!
-
-## 🎨 Customization
-
-### **Colors & Theme**
-Edit `src/index.css` to modify:
-- Primary color palette
-- Gradient definitions
-- Shadow values
-- Animation timings
-
-### **Typography**
-Update `tailwind.config.ts` for:
-- Font family changes
-- Size scale adjustments
-- Line height modifications
-
-### **Animations**
-Modify `src/components/LandingPage.tsx` to:
-- Adjust animation delays
-- Change transition curves
-- Add new motion variants
-
-## 📱 Responsive Design
-
-The application is fully responsive with:
-- **Mobile**: 320px+ (optimized touch interactions)
-- **Tablet**: 768px+ (enhanced layouts)
-- **Desktop**: 1024px+ (full feature set)
-- **Large**: 1440px+ (expanded content)
-
-## 🔧 Development
-
-### **File Structure**
-```
-src/
-├── components/          # Reusable UI components
-├── pages/              # Page-level components
-├── hooks/              # Custom React hooks
-├── utils/              # Helper functions
-├── index.css           # Global styles and design system
-└── App.tsx            # Main application component
-```
-
-### **Key Components**
-- **LandingPage**: Main homepage with enhanced animations
-- **FloatingActionButton**: Quick action access
-- **ScrollIndicator**: Progress visualization
-- **LoadingSpinner**: Professional loading states
-
-## 🎯 Future Enhancements
-
-- [ ] Dark mode support
-- [ ] More resume templates
-- [ ] Advanced AI suggestions
-- [ ] Export to multiple formats
-- [ ] Collaboration features
-- [ ] Analytics dashboard
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📞 Support
-
-For questions or support, please open an issue in the repository.
+An intuitive, ATS-friendly, and interactive resume builder built to create high-scoring resumes for job seekers, students, and professionals. Features real-time editing, intelligent document parsing, tailored career pathing, custom export formats (PDF & Word), and full cross-platform support.
 
 ---
 
-**Built with modern web technologies**
+## ✨ Features
+
+### 🎯 **Tailored Career Pathing**
+- **Student & Professional Workflows**: Customized field suggestions, skills emphasis, and templates tailored for beginners, entry-level, and experienced applicants.
+- **ATS Optimization**: Section layout and keywords tuned for passing Applicant Tracking Systems.
+
+### 📁 **Smart Document Parsing & Import**
+- **Multi-Format Parsing**: Import existing resumes in `.pdf`, `.docx`, or `.txt` formats using built-in parsing (`pdfjs-dist`, `mammoth`).
+- **Template Auto-Detection**: Intelligently auto-fills profile details, experiences, education, and skills.
+
+### 🎨 **Modern Design & User Experience**
+- **Glassmorphism & Micro-Interactions**: Modern UI built with **Shadcn UI** & **Radix UI** primitives and customized **Tailwind CSS**.
+- **Physics-Based Animations**: Smooth entrance, hover, and spring transitions powered by **Framer Motion**.
+- **Responsive & Dark-Mode Ready**: Seamless layout across mobile (320px+) to ultra-wide displays.
+
+### 🔐 **User Authentication & Cloud Persistence**
+- **Firebase Authentication**: Email/Password authentication, email verification, password reset, and protected routes.
+
+### 📱 **Mobile & Cross-Platform Ready**
+- **Capacitor Integration**: Packaged for Android and iOS native mobile apps alongside web deployment.
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|---|---|
+| **Frontend Core** | React 18, TypeScript, Vite |
+| **Styling & UI** | Tailwind CSS, Shadcn UI / Radix UI, Lucide Icons |
+| **Animations** | Framer Motion, Tailwind Animate |
+| **State & Data Fetching** | TanStack React Query, React Hook Form, Zod |
+| **Authentication** | Firebase Auth |
+| **Document Processing** | `jspdf`, `html2canvas`, `docx`, `pdfjs-dist`, `mammoth` |
+| **Cross-Platform** | Capacitor (iOS & Android) |
+
+---
+
+## 🚀 Quick Start
+
+### **Prerequisites**
+- **Node.js**: `v18+`
+- **npm** or **bun** / **yarn**
+
+### **Installation & Setup**
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/Bilal-Ahmed35/ATS-RESUME-BUILDER.git
+cd ATS-RESUME-BUILDER
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the local development server
+npm run dev
+```
+
+The application will be available at `http://localhost:8080` (or `http://localhost:5173`).
+
+---
+
+## 📁 Project Structure
+
+```
+ATS-RESUME-BUILDER/
+├── public/                 # Static assets & icons
+├── src/
+│   ├── components/         # Reusable UI components & Resume Builder modules
+│   │   └── ui/             # Radix / Shadcn UI components
+│   ├── contexts/           # React contexts (e.g., Firebase AuthContext)
+│   ├── hooks/              # Custom React hooks
+│   ├── pages/              # Router pages (Index, Login, SignUp, Profile, etc.)
+│   ├── lib/                # Firebase setup & utilities
+│   └── index.css           # Global Tailwind & CSS custom properties
+├── capacitor.config.ts     # Native mobile build configuration
+├── tailwind.config.ts      # Tailwind configuration & typography plugins
+└── vite.config.ts          # Vite bundle & alias configuration
+```
+
+---
+
+## 📱 Mobile Build (Capacitor)
+
+```bash
+# Build web assets for native mobile targets
+npm run build
+
+# Sync with Capacitor
+npx cap sync
+```
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
