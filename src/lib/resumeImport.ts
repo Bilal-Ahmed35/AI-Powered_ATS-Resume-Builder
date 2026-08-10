@@ -6,9 +6,10 @@ const uid = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 // Extract text from various file types
 async function extractTextFromPdf(file: File): Promise<string> {
   const { getDocument, GlobalWorkerOptions } = await import("pdfjs-dist");
-  // Use a more reliable CDN worker URL
-  // @ts-ignore
-  GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${(await import("pdfjs-dist/package.json")).version}/build/pdf.worker.min.js`;
+
+  // Dynamically import the worker URL (Vite will emit it as an asset)
+  const { default: workerUrl } = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+  GlobalWorkerOptions.workerSrc = workerUrl;
 
   const data = await file.arrayBuffer();
   const pdf = await getDocument({ data }).promise;
@@ -17,7 +18,9 @@ async function extractTextFromPdf(file: File): Promise<string> {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
     // @ts-ignore
-    const strings = content.items.map((it: any) => (it && it.str) ? it.str : "");
+    const strings = content.items.map((it: any) =>
+      it && it.str ? it.str : "",
+    );
     text += strings.join(" ") + "\n";
   }
   return text;
@@ -54,14 +57,18 @@ async function extractTextFromFile(file: File): Promise<string> {
     }
     if (type === "application/msword" || name.endsWith(".doc")) {
       throw new Error(
-        "Legacy .doc files are not supported. Please upload PDF, DOCX, or TXT files for best results."
+        "Legacy .doc files are not supported. Please upload PDF, DOCX, or TXT files for best results.",
       );
     }
-    throw new Error("Unsupported file type. Please upload PDF, DOCX, or TXT files.");
+    throw new Error(
+      "Unsupported file type. Please upload PDF, DOCX, or TXT files.",
+    );
   } catch (error) {
     // If specific extraction fails, provide helpful fallback message
     if (error instanceof Error && error.message.includes("worker")) {
-      throw new Error("PDF processing failed. For best results, try uploading a TXT or DOCX file instead.");
+      throw new Error(
+        "PDF processing failed. For best results, try uploading a TXT or DOCX file instead.",
+      );
     }
     throw error;
   }
@@ -76,9 +83,11 @@ function parseResumeTextToData(text: string): ResumeData {
 
   const emailMatch = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
   const phoneMatch = text.match(
-    /(\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}/
+    /(\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}/,
   );
-  const linkedInMatch = text.match(/(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[\w-_.]+/i);
+  const linkedInMatch = text.match(
+    /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/[\w-_.]+/i,
+  );
 
   // first non-empty line that isn't email/phone/url -> name candidate
   let fullName = "";
@@ -97,7 +106,8 @@ function parseResumeTextToData(text: string): ResumeData {
 
   // portfolio: first url that isn't linkedin
   let portfolio = "";
-  const urlMatches = text.match(/https?:\/\/[\w-._~:?#\[\]@!$&'()*+,;=/]+/gi) || [];
+  const urlMatches =
+    text.match(/https?:\/\/[\w-._~:?#\[\]@!$&'()*+,;=/]+/gi) || [];
   const portfolioUrl = urlMatches.find((u) => !/linkedin\.com/i.test(u));
   if (portfolioUrl) portfolio = portfolioUrl;
 
@@ -108,7 +118,9 @@ function parseResumeTextToData(text: string): ResumeData {
     let i = skillsIndex + 1;
     const buff: string[] = [];
     while (i < lines.length && lines[i] && !/^\s*$/.test(lines[i])) {
-      const stop = /experience|education|project|summary|profile/i.test(lines[i]);
+      const stop = /experience|education|project|summary|profile/i.test(
+        lines[i],
+      );
       if (stop) break;
       buff.push(lines[i]);
       i++;
@@ -123,7 +135,8 @@ function parseResumeTextToData(text: string): ResumeData {
 
   // Education parsing - look for institution keywords and degree keywords
   const education = [] as ResumeData["education"];
-  const degreeRegex = /\b(Bachelor|Master|B\.?Sc|M\.?Sc|B\.?Tech|M\.?Tech|B\.?E|M\.?E|BA|MA|Ph\.?D)\b/i;
+  const degreeRegex =
+    /\b(Bachelor|Master|B\.?Sc|M\.?Sc|B\.?Tech|M\.?Tech|B\.?E|M\.?E|BA|MA|Ph\.?D)\b/i;
   for (let i = 0; i < lines.length; i++) {
     if (/university|college|institute|school/i.test(lines[i])) {
       const inst = lines[i];
@@ -134,7 +147,9 @@ function parseResumeTextToData(text: string): ResumeData {
         const m = lines[j].match(degreeRegex);
         if (m) {
           degree = m[0];
-          const after = lines[j].replace(degreeRegex, "").replace(/^[,:-\s]+/, "");
+          const after = lines[j]
+            .replace(degreeRegex, "")
+            .replace(/^[,:-\s]+/, "");
           if (after) field = after;
           break;
         }
@@ -154,7 +169,8 @@ function parseResumeTextToData(text: string): ResumeData {
 
   // Experience parsing - naive date range detection
   const workExperience = [] as ResumeData["workExperience"];
-  const dateRange = /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)?\s?\d{4}\s?[–-]\s?(Present|Current|\d{4})/i;
+  const dateRange =
+    /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)?\s?\d{4}\s?[–-]\s?(Present|Current|\d{4})/i;
   for (let i = 0; i < lines.length; i++) {
     if (dateRange.test(lines[i])) {
       const line = lines[i];
@@ -172,8 +188,12 @@ function parseResumeTextToData(text: string): ResumeData {
         position = pos?.trim() || position;
       }
       const dr = line.match(dateRange)?.[0] || "";
-      const [startDate = "", endDateRaw = ""] = dr.split(/[–-]/).map((s) => s.trim());
-      const endDate = /present|current/i.test(endDateRaw) ? "" : normalizeDate(endDateRaw);
+      const [startDate = "", endDateRaw = ""] = dr
+        .split(/[–-]/)
+        .map((s) => s.trim());
+      const endDate = /present|current/i.test(endDateRaw)
+        ? ""
+        : normalizeDate(endDateRaw);
       workExperience.push({
         id: uid(),
         company,
@@ -214,7 +234,9 @@ function normalizeDate(input: string): string {
   const s = input.trim();
   // Keep as-is if already YYYY or Mon YYYY
   if (/^\d{4}$/.test(s)) return `${s}-01`;
-  const m = s.match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\s?(\d{4})/i);
+  const m = s.match(
+    /(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\s?(\d{4})/i,
+  );
   if (m) {
     const months: Record<string, string> = {
       jan: "01",

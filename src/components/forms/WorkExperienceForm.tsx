@@ -299,7 +299,30 @@ const WorkExperienceForm = ({ data, onChange }: WorkExperienceFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label>Key Responsibilities *</Label>
+            <div className="flex items-center justify-between">
+              <Label>Key Responsibilities *</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={async () => {
+                  if (!exp.position) {
+                    alert("Please enter a Position title first.");
+                    return;
+                  }
+                  try {
+                    const { generateBulletPoints } = await import("@/lib/gemini");
+                    const bullets = await generateBulletPoints(exp.position, exp.company, exp.responsibilities.join("\n"));
+                    setWorkFields(exp.id, { responsibilities: bullets });
+                  } catch (err: any) {
+                    alert(err.message || "AI generation failed. Please check your Gemini API key in AI Assist.");
+                  }
+                }}
+                className="text-xs flex items-center gap-1 text-blue-600 border-blue-200 bg-blue-50/50 hover:bg-blue-100"
+              >
+                <span>✨ AI Generate Bullets</span>
+              </Button>
+            </div>
             <Textarea
               value={exp.responsibilities.join("\n")}
               onChange={(e) => updateResponsibilities(exp.id, e.target.value)}

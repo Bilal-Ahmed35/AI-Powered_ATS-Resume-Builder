@@ -4,17 +4,30 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Your web app's Firebase configuration using environment variables for security
 const firebaseConfig = {
-  apiKey: "AIzaSyD7bo6Aq6clXEEN2fs2-hd3d1rMs0kW2CI",
-  authDomain: "ats-resume-278d4.firebaseapp.com",
-  projectId: "ats-resume-278d4",
-  storageBucket: "ats-resume-278d4.firebasestorage.app",
-  messagingSenderId: "896960446754",
-  appId: "1:896960446754:web:99acccc56114842e95657b",
-  measurementId: "G-2Z0FJ3184Z"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
+
+// Ensure all required env variables are present
+if (
+  !firebaseConfig.apiKey ||
+  !firebaseConfig.authDomain ||
+  !firebaseConfig.projectId ||
+  !firebaseConfig.storageBucket ||
+  !firebaseConfig.messagingSenderId ||
+  !firebaseConfig.appId
+) {
+  throw new Error(
+    "Firebase configuration is incomplete. Please define all VITE_FIREBASE_* variables in your .env file."
+  );
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

@@ -60,6 +60,46 @@ const SkillsForm = ({ data, onChange }: SkillsFormProps) => {
 
   return (
     <div className="space-y-8">
+      {/* AI Recommendation Banner */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <h4 className="text-sm font-semibold text-blue-900 flex items-center gap-1.5">
+            ✨ AI Skill Recommendation Engine
+          </h4>
+          <p className="text-xs text-blue-700">
+            Let Gemini AI analyze your target role and recommend top industry skills.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="default"
+          size="sm"
+          onClick={async () => {
+            const role = prompt("Enter your target job title (e.g. Frontend Developer, Data Analyst):");
+            if (!role) return;
+            try {
+              const { suggestSkillsForRole } = await import("@/lib/gemini");
+              const res = await suggestSkillsForRole(role);
+              const newTech = Array.from(new Set([...data.skills.technical, ...res.technical]));
+              const newSoft = Array.from(new Set([...data.skills.soft, ...res.soft]));
+              onChange({
+                ...data,
+                skills: {
+                  ...data.skills,
+                  technical: newTech,
+                  soft: newSoft,
+                },
+              });
+            } catch (err: any) {
+              alert(err.message || "Skill suggestion failed. Check API key in AI Assist.");
+            }
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white text-xs shrink-0"
+        >
+          Generate AI Skills
+        </Button>
+      </div>
+
       {/* Technical Skills */}
       <div className="space-y-4">
         <Label className="text-base font-medium">Technical Skills</Label>

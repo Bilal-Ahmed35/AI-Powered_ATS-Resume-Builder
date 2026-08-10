@@ -13,6 +13,8 @@ import { generatePDF } from "@/lib/pdfGenerator";
 import { ResumeData } from "@/types/resume";
 import { useToast } from "@/components/ui/use-toast";
 
+import AIAssistModal from "./AIAssistModal";
+
 interface ResumeBuilderProps {
   userType: 'student' | 'employee';
   onBack: () => void;
@@ -22,6 +24,7 @@ interface ResumeBuilderProps {
 const ResumeBuilder = ({ userType, onBack, initialData }: ResumeBuilderProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [showAIModal, setShowAIModal] = useState(false);
   const [resumeData, setResumeData] = useState<ResumeData>(initialData || {
     personalInfo: {
       fullName: '',
@@ -109,6 +112,12 @@ const ResumeBuilder = ({ userType, onBack, initialData }: ResumeBuilderProps) =>
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+      <AIAssistModal
+        open={showAIModal}
+        onOpenChange={setShowAIModal}
+        resumeData={resumeData}
+        onUpdateResumeData={setResumeData}
+      />
       <div className="container mx-auto px-4 py-4 lg:py-8">
         {/* Header */}
         <motion.div
@@ -190,9 +199,10 @@ const ResumeBuilder = ({ userType, onBack, initialData }: ResumeBuilderProps) =>
               <Button
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2 text-xs lg:text-sm"
+                onClick={() => setShowAIModal(true)}
+                className="flex items-center gap-2 text-xs lg:text-sm bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 text-blue-700 hover:from-blue-100 hover:to-indigo-100"
               >
-                <Wand2 className="w-4 h-4" />
+                <Wand2 className="w-4 h-4 text-blue-600" />
                 <span className="hidden sm:inline">AI Assist</span>
                 <span className="sm:hidden">AI</span>
               </Button>
