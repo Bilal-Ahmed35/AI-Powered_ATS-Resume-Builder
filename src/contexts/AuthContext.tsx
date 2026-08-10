@@ -19,6 +19,10 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
+// Reusable auth providers – created once per app lifecycle
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
+
 interface UserProfile {
   uid: string;
   email: string;
@@ -220,17 +224,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Sign in with Google
   const signInWithGoogle = async () => {
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
       await createUserProfile(user);
-
       toast({
         title: "Welcome!",
         description: "You have successfully signed in with Google.",
       });
     } catch (error: any) {
+      if (error.code === "auth/popup-closed-by-user") {
+        throw new Error("Sign‑in window was closed before completing.");
+      }
+      if (error.code === "auth/popup-blocked") {
+        throw new Error("The popup was blocked by the browser. Please enable pop‑ups for this site.");
+      }
       console.error('Google sign in error:', error);
       throw new Error(error.message || 'Failed to sign in with Google');
     }
@@ -239,17 +246,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Sign in with GitHub
   const signInWithGithub = async () => {
     try {
-      const provider = new GithubAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, githubProvider);
       const user = result.user;
-
       await createUserProfile(user);
-
       toast({
         title: "Welcome!",
         description: "You have successfully signed in with GitHub.",
       });
     } catch (error: any) {
+      if (error.code === "auth/popup-closed-by-user") {
+        throw new Error("Sign‑in window was closed before completing.");
+      }
+      if (error.code === "auth/popup-blocked") {
+        throw new Error("The popup was blocked by the browser. Please enable pop‑ups for this site.");
+      }
       console.error('GitHub sign in error:', error);
       throw new Error(error.message || 'Failed to sign in with GitHub');
     }
@@ -365,17 +375,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', user ? 'User logged in' : 'User logged out');
       setCurrentUser(user);
       if (user) {
-        console.log('Fetching user profile for:', user.email);
-        await fetchUserProfile(user);
+        // Only fetch profile if we haven't already loaded it
+        if (!userProfile) {
+          await fetchUserProfile(user);
+        }
       } else {
         setUserProfile(null);
       }
       setLoading(false);
     });
-
     return unsubscribe;
   }, []);
 
