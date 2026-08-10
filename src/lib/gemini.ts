@@ -3,9 +3,8 @@ import { ResumeData } from "@/types/resume";
 
 const STORAGE_KEY = "gemini_api_key";
 
-// Use a model that is available for your API key.
-// Your models list showed Gemini 3.5 Flash with generateContent support.
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+// Gemini model
+const GEMINI_MODEL = "gemini-3.5-flash";
 
 /**
  * Get the Gemini API key.
@@ -61,13 +60,12 @@ function getGeminiClient(): GoogleGenAI {
 /**
  * Clean JSON returned by Gemini.
  *
- * Gemini may sometimes return:
+ * Gemini may sometimes return JSON inside markdown
+ * code fences such as:
  *
  * ```json
- * [...]
+ * {...}
  * ```
- *
- * This removes the markdown code fences.
  */
 function cleanJsonResponse(text: string): string {
   return text
@@ -102,6 +100,7 @@ Rules:
 3. Keep each bullet concise, professional, and optimized for ATS keywords.
 4. Do not invent highly specific achievements that are not reasonably supported by the provided information.
 5. Return ONLY a JSON array of strings.
+6. Do not wrap the response in markdown code fences.
 
 Example:
 ["Bullet 1", "Bullet 2", "Bullet 3", "Bullet 4"]`;
@@ -227,10 +226,12 @@ Return ONLY a valid JSON object matching this structure:
 }
 
 Rules:
+
 1. Focus on skills genuinely relevant to the specified role.
 2. Prioritize skills commonly requested by employers.
 3. Do not include explanations.
-4. Return valid JSON only.`;
+4. Return valid JSON only.
+5. Do not wrap the JSON in markdown code fences.`;
 
   const result = await genAI.models.generateContent({
     model: GEMINI_MODEL,
